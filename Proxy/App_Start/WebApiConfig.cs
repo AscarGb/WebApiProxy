@@ -30,7 +30,7 @@ namespace Proxy
             var client = new HttpClient();
             var clonedRequest = await HttpRequestMessageExtensions.CloneHttpRequestMessageAsync(request);
 
-            string url = redirectLocation + localPath.Replace(subApp, "");
+            string url = redirectLocation + localPath.Replace(subApp, "") + request.RequestUri.Query;
             clonedRequest.RequestUri = new Uri(url);
             return await client.SendAsync(clonedRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
