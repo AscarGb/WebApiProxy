@@ -21,23 +21,28 @@ namespace Proxy
     }
     public class ProxyHandler : DelegatingHandler
     {
+        string redirectLocation = WebConfigurationManager.AppSettings["ApiAdress"];
+        string subApp = WebConfigurationManager.AppSettings["subApp"];
+
+        static HttpClient _httpClient = new HttpClient();
         private async Task<HttpResponseMessage> RedirectRequest(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var redirectLocation = WebConfigurationManager.AppSettings["ApiAdress"];
-            var subApp = WebConfigurationManager.AppSettings["subApp"];
             var localPath = request.RequestUri.LocalPath;
 
-            var client = new HttpClient();
             var clonedRequest = await HttpRequestMessageExtensions.CloneHttpRequestMessageAsync(request);
 
             string url = redirectLocation + localPath.Replace(subApp, "") + request.RequestUri.Query;
+
+            request.DisposeRequestResources();
+            request.Dispose();
+
+            request = clonedRequest;
+
             clonedRequest.RequestUri = new Uri(url);
-            return await client.SendAsync(clonedRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
+            return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         }
-
-        protected override
-            Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
             return RedirectRequest(request, cancellationToken);
         }
@@ -49,20 +54,21 @@ namespace Proxy
         {
             var clone = new HttpRequestMessage(req.Method, req.RequestUri);
 
-            var ms = new MemoryStream();
-
-            if (req.Content != null)
+            using (var ms = new MemoryStream())
             {
-                await req.Content.CopyToAsync(ms).ConfigureAwait(false);
-                ms.Position = 0;
-
-                if ((ms.Length > 0 || req.Content.Headers.Any()) && clone.Method != HttpMethod.Get)
+                if (req.Content != null)
                 {
-                    clone.Content = new StreamContent(ms);
+                    await req.Content.CopyToAsync(ms).ConfigureAwait(false);
+                    ms.Position = 0;
 
-                    if (req.Content.Headers != null)
-                        foreach (var h in req.Content.Headers)
-                            clone.Content.Headers.Add(h.Key, h.Value);
+                    if ((ms.Length > 0 || req.Content.Headers.Any()) && clone.Method != HttpMethod.Get)
+                    {
+                        clone.Content = new StreamContent(ms);
+
+                        if (req.Content.Headers != null)
+                            foreach (var h in req.Content.Headers)
+                                clone.Content.Headers.Add(h.Key, h.Value);
+                    }
                 }
             }
 
