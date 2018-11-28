@@ -54,23 +54,23 @@ namespace Proxy
         {
             var clone = new HttpRequestMessage(req.Method, req.RequestUri);
 
-            using (var ms = new MemoryStream())
+            var ms = new MemoryStream();
+
+            if (req.Content != null)
             {
-                if (req.Content != null)
+                await req.Content.CopyToAsync(ms);
+                ms.Position = 0;
+
+                if ((ms.Length > 0 || req.Content.Headers.Any()) && clone.Method != HttpMethod.Get)
                 {
-                    await req.Content.CopyToAsync(ms).ConfigureAwait(false);
-                    ms.Position = 0;
+                    clone.Content = new StreamContent(ms);
 
-                    if ((ms.Length > 0 || req.Content.Headers.Any()) && clone.Method != HttpMethod.Get)
-                    {
-                        clone.Content = new StreamContent(ms);
-
-                        if (req.Content.Headers != null)
-                            foreach (var h in req.Content.Headers)
-                                clone.Content.Headers.Add(h.Key, h.Value);
-                    }
+                    if (req.Content.Headers != null)
+                        foreach (var h in req.Content.Headers)
+                            clone.Content.Headers.Add(h.Key, h.Value);
                 }
             }
+
 
             clone.Version = req.Version;
 
