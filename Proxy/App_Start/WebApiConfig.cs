@@ -58,7 +58,7 @@ namespace Proxy
 
             if (req.Content != null)
             {
-                await req.Content.CopyToAsync(ms);
+                await req.Content.CopyToAsync(ms).ConfigureAwait(false);
                 ms.Position = 0;
 
                 if ((ms.Length > 0 || req.Content.Headers.Any()) && clone.Method != HttpMethod.Get)
