@@ -1,14 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 using Proxy.App_Start;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
+using Serilog;
+using System.Web.Hosting;
 using System.Web.Http;
 
 [assembly: OwinStartup(typeof(Startup))]
@@ -18,8 +12,16 @@ namespace Proxy.App_Start
     {
         public void Configuration(IAppBuilder app)
         {
+            var log = new LoggerConfiguration()
+               .WriteTo.File(HostingEnvironment.MapPath("~/logs/log.txt"), rollingInterval: RollingInterval.Day)
+               .CreateLogger();
+            Log.Logger = log;
+
+            app.Use<GlobalExceptionMiddleware>();
+
             HttpConfiguration config = new HttpConfiguration();
-            WebApiConfig.Register(config);            
+            WebApiConfig.Register(config);  
+            
             app.UseWebApi(config);
         }
     }
