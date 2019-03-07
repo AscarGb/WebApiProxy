@@ -25,6 +25,4 @@ namespace Proxy.App_Start
             app.UseWebApi(config);
         }
     }
-
-
 }

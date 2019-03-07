@@ -9,9 +9,8 @@ namespace Proxy
     public class ProxyHandler : DelegatingHandler
     {
         static int _instanceCount = 0;
-
-        string redirectLocation = WebConfigurationManager.AppSettings["ApiAdress"];
-        string subApp = WebConfigurationManager.AppSettings["subApp"];
+        readonly string redirectLocation = WebConfigurationManager.AppSettings["ApiAdress"];
+        readonly string subApp = WebConfigurationManager.AppSettings["subApp"];
 
         HttpClient _httpClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
 
@@ -31,33 +30,36 @@ namespace Proxy
             CancellationTokenSource tokenSource = null;
             try
             {
-                tokenSource = new CancellationTokenSource();
+                tokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 tokenSource.CancelAfter(Timeout.InfiniteTimeSpan);
 
                 var localPath = request.RequestUri.LocalPath;
 
-                clonedRequest = await request.CloneHttpRequestMessageAsync();
+                clonedRequest = await request.CloneHttpRequestMessageAsync()
+                    .ConfigureAwait(false);
 
                 string url = string.Format("{0}{1}{2}", redirectLocation, localPath.Replace(subApp, ""), request.RequestUri.Query);
 
                 clonedRequest.RequestUri = new Uri(url);
 
-                response = await _httpClient.SendAsync(clonedRequest, HttpCompletionOption.ResponseHeadersRead, tokenSource.Token);
+                response = await _httpClient.SendAsync(clonedRequest, HttpCompletionOption.ResponseHeadersRead, tokenSource.Token)
+                    .ConfigureAwait(false);
+
                 return response;
             }
             catch
             {
-                clonedRequest?.Dispose();
                 response?.Dispose();
-                tokenSource?.Dispose();
                 throw;
             }
             finally
             {
+                clonedRequest?.Dispose();
+                tokenSource?.Dispose();
                 request?.Dispose();
             }
         }
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             return RedirectRequest(request, cancellationToken);
         }

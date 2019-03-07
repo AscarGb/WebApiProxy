@@ -70,3 +70,39 @@ System.Net.Http.HttpRequestException: Произошла ошибка при о�
    в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
    в System.Web.Http.HttpServer.<SendAsync>d__24.MoveNext()
+2019-03-07 20:38:40.901 +05:00 [ERR] Ошибка: 
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно соединиться с удаленным сервером ---> System.Net.Sockets.SocketException: Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение 127.0.0.1:5000
+   в System.Net.Sockets.Socket.InternalEndConnect(IAsyncResult asyncResult)
+   в System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   в System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Exception& exception)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   в System.Net.Http.HttpClientHandler.GetResponseCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   в Proxy.ProxyHandler.<RedirectRequest>d__5.MoveNext() в J:\work\Proxy\Proxy\ProxyHandler.cs:строка 50
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   в System.Web.Http.HttpServer.<SendAsync>d__24.MoveNext()
+2019-03-07 20:38:44.156 +05:00 [ERR] Ошибка: 
+System.Net.Http.HttpRequestException: Произошла ошибка при отправке запроса. ---> System.Net.WebException: Невозможно соединиться с удаленным сервером ---> System.Net.Sockets.SocketException: Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение 127.0.0.1:5000
+   в System.Net.Sockets.Socket.InternalEndConnect(IAsyncResult asyncResult)
+   в System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   в System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Exception& exception)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Net.HttpWebRequest.EndGetResponse(IAsyncResult asyncResult)
+   в System.Net.Http.HttpClientHandler.GetResponseCallback(IAsyncResult ar)
+   --- Конец трассировки внутреннего стека исключений ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   в Proxy.ProxyHandler.<RedirectRequest>d__5.MoveNext() в J:\work\Proxy\Proxy\ProxyHandler.cs:строка 50
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   в System.Web.Http.HttpServer.<SendAsync>d__24.MoveNext()
