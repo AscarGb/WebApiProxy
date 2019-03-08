@@ -12,7 +12,7 @@ namespace Proxy
         readonly string redirectLocation = WebConfigurationManager.AppSettings["ApiAdress"];
         readonly string subApp = WebConfigurationManager.AppSettings["subApp"];
 
-        HttpClient _httpClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+        HttpClient _httpClient;
 
         public ProxyHandler()
         {
@@ -20,6 +20,16 @@ namespace Proxy
             if (_instanceCount > 1)
             {
                 throw new Exception("Только один экземпляр может быть создан");
+            }
+
+            try
+            {
+                _httpClient = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
+            }
+            catch
+            {
+                _httpClient?.Dispose();
+                throw;
             }
         }
 
